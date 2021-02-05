@@ -7,9 +7,9 @@ Nodejs middleware for Milestones angular 10 application
 What I wanted     | What I got  
 ----------------- | --------------  
 IDE               | MS Visual Studio Code  
-Front-end         | Angular (8.3.23)  
-Database          | MongoDB (4.2.3)  
-Middleware        | Node (12.18.2), Express (4.17.1)  
+Front-end         | Angular 10  
+Database          | MongoDB  
+Middleware        | Node 14, Express (4.17.1)  
 MW Hosting        | GCP    
 App Hosting       | GCP  
 
