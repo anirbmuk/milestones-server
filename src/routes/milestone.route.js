@@ -18,6 +18,7 @@ const validateStringDate = require('./../utils/date.util');
 
 router.post('', guard, async (req, res) => {
     const email = req.user.email;
+    const payload = { ... req.body };
     // const activitycode = req.body.activitycode;
     try {        
         /* const activity = await validateActivityCode(email, activitycode);
@@ -25,9 +26,9 @@ router.post('', guard, async (req, res) => {
             return res.status(400).send({ error: `No activity found with code ${activitycode}` });
         } */
 
-        const month = req.body.month;
-        const day = req.body.day;
-        const year = req.body.year;
+        const month = payload.month;
+        const day = payload.day;
+        const year = payload.year;
 
         if (month === undefined || day === undefined || year === undefined) {
             return res.status(400).send({ error: `Invalid date sent in request` });
@@ -42,10 +43,11 @@ router.post('', guard, async (req, res) => {
             return res.status(400).send({ error: 'Error while fetching next value from sequence milestoneid' });
         }
 
-        req.body.milestoneid = milestoneid;
-        req.body.email = email;
+        payload.milestoneid = milestoneid;
+        payload.email = email;
+        payload.activitycodeslc = !!payload.activitycodes ? payload.activitycodes.map(each => each.toLowerCase()) : []
 
-        const milestone = new Milestone(req.body);
+        const milestone = new Milestone(payload);
         await milestone.save();
         return res.status(201).send(milestone);
     } catch (error) {
@@ -60,7 +62,7 @@ router.get('', guard, async(req, res) => {
         return res.status(400).send({ error: 'Cannot perform a search without a filter pattern' });
     }
 
-    let day, month, year, milestoneid, milestones;
+    let day, month, year, activitycodes, milestoneid, milestones;
     try {
         if (filterPattern === 'date') {
             const milestonedateparts = (searchString).split('-');
@@ -71,6 +73,12 @@ router.get('', guard, async(req, res) => {
         } else if (filterPattern === 'id') {
             milestoneid = +searchString;
             milestones = await Milestone.findOne({ email: req.user.email, milestoneid });
+        } else if (filterPattern === 'tag') {
+            if (!searchString) {
+                return res.status(400).send({ error: `At least one tag must be present in search query` });
+            }
+            activitycodes = !!searchString ? (searchString.toLowerCase()).split(',') : [];
+            milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $in: activitycodes } });
         }
         return res.status(200).send(milestones);
     } catch (error) {

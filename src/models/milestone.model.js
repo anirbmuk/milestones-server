@@ -34,6 +34,7 @@ const milestoneSchema = mongoose.Schema({
         trim: true
     },
     activitycodes: [String],
+    activitycodeslc: [String],
     description: {
         type: String,
         trim: true
@@ -42,12 +43,23 @@ const milestoneSchema = mongoose.Schema({
     timestamps: true
 });
 
+milestoneSchema.index({
+    day: 1,
+    month: 1,
+    year: 1
+});
+
+milestoneSchema.index({
+    activitycodeslc: 1
+});
+
 milestoneSchema.methods.toJSON = function() {
     const milestone = this;
     const milestoneObject = milestone.toObject();
 
     delete milestoneObject._id;
     delete milestoneObject.__v;
+    delete milestoneObject.activitycodeslc;
 
     return milestoneObject;
 };
