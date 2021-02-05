@@ -25,7 +25,7 @@ const sequenceSchema = mongoose.Schema({
 
 sequenceSchema.index({
     email: 1,
-    sequencename: 2
+    sequencename: 1
 }, {
     unique: true
 });
