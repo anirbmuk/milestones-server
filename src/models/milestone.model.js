@@ -5,8 +5,7 @@ const milestoneSchema = mongoose.Schema({
     milestoneid: {
         type: Number,
         required: true,
-        trim: true,
-        unique: true
+        trim: true
     },
     email: {
         type: String,
@@ -41,6 +40,13 @@ const milestoneSchema = mongoose.Schema({
     }
 }, {
     timestamps: true
+});
+
+milestoneSchema.index({
+    milestoneid: 1,
+    email: 1
+}, {
+    unique: true
 });
 
 milestoneSchema.index({
