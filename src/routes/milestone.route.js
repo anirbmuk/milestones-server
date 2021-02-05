@@ -45,7 +45,7 @@ router.post('', guard, async (req, res) => {
 
         payload.milestoneid = milestoneid;
         payload.email = email;
-        payload.activitycodeslc = !!payload.activitycodes ? payload.activitycodes.map(each => each.toLowerCase()) : []
+        payload.activitycodeslc = (!!payload.activitycodes && Array.isArray(payload.activitycodes)) ? payload.activitycodes.map(each => each.toLowerCase()) : []
 
         const milestone = new Milestone(payload);
         await milestone.save();
@@ -126,6 +126,7 @@ router.patch('/:milestoneid', guard, async (req, res) => {
         }
 
         updateAttributes.forEach(attribute => milestone[attribute] = update[attribute]);
+        milestone.activitycodeslc = (!!milestone.activitycodes && Array.isArray(milestone.activitycodes)) ? milestone.activitycodes.map(each => each.toLowerCase()) : []
         await milestone.save();
 
         res.status(200).send(milestone);
