@@ -29,7 +29,7 @@ const activitySchema = mongoose.Schema({
 
 activitySchema.index({
     email: 1,
-    activitycode: 1
+    activitycode: 2
 }, {
     unique: true
 });
