@@ -22,5 +22,5 @@ https://github.com/anirbmuk/milestones.git
 
 ## Cloud deployment
 Angular - https://milestones-home.firebaseapp.com  
-Node & Express - https://milestones-server.herokuapp.com  
+Node & Express - https://milestones-home.uc.r.appspot.com  
 Mongo - Cloud atlas  
