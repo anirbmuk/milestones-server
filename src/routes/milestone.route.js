@@ -78,7 +78,7 @@ router.get('', guard, async(req, res) => {
                 return res.status(400).send({ error: `At least one tag must be present in search query` });
             }
             activitycodes = !!searchString ? (searchString.toLowerCase()).split(',') : [];
-            milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $in: activitycodes } });
+            milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $in: activitycodes } }).sort({ year: 1, month: 1, day: 1 });
         }
         return res.status(200).send(milestones);
     } catch (error) {
@@ -111,7 +111,7 @@ router.patch('/:milestoneid', guard, async (req, res) => {
 
     const milestoneid = parseInt(req.params.milestoneid);
     try {
-        const milestone = await Milestone.findOne({ email, milestoneid });
+        const milestone = await Milestone.findOne({ milestoneid, email });
         if (!milestone) {
             return res.status(404).send({ error: `No milestone found with id ${milestoneid}` });
         }
