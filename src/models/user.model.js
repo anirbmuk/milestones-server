@@ -67,15 +67,15 @@ userSchema.methods.generateToken = async function() {
 
 userSchema.statics.authenticate = async function(email, password) {
     if (!email || !password) {
-        throw new Error(`Failed to authenticate to milestones system`);
+        throw new Error(`Username or password cannot be empty`);
     }
     const user = await User.findOne({ email });
     if (!user) {
-        throw new Error(`Failed to authenticate to milestones system`);
+        throw new Error(`Invalid credentials provided for milestones system`);
     }
     const match = await bcryptjs.compare(password, user.password);
     if (!match) {
-        throw new Error(`Failed to authenticate to milestones system`);
+        throw new Error(`Invalid credentials provided for milestones system`);
     }
     return user;
 };
