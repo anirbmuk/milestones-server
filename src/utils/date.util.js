@@ -22,4 +22,10 @@ const validateStringDate = stringDateInput => {
 
 };
 
-module.exports = validateStringDate;
+const validateStringDateRange = (stringDateInput1, stringDateInput2) => {
+    const date1 = new Date(stringDateInput1);
+    const date2 = new Date(stringDateInput2);
+    return date2.getTime() >= date1.getTime();
+};
+
+module.exports = { validateStringDate, validateStringDateRange };

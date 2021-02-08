@@ -3,7 +3,7 @@ const Milestone = require('./../models/milestone.model');
 // const Activity = require('./../models/activity.model');
 const guard = require('./../middleware/guard.mw');
 const getNextValue = require('./../utils/sequence.util');
-const validateStringDate = require('./../utils/date.util');
+const { validateStringDate, validateStringDateRange } = require('./../utils/date.util');
 
 /* const validateActivityCode = async (email, activitycode) => {
     if (!activitycode) {
@@ -69,16 +69,53 @@ router.get('', guard, async(req, res) => {
             month = milestonedateparts[0];
             day = milestonedateparts[1];
             year = milestonedateparts[2];
+            const stringDateInput = `${month}-${day}-${year}`;
+            if (!validateStringDate(stringDateInput)) {
+                return res.status(400).send({ error: `${stringDateInput} is not a valid date` });
+            }
             milestones = await Milestone.find({ email: req.user.email, month, day, year });
         } else if (filterPattern === 'id') {
             milestoneid = +searchString;
             milestones = await Milestone.findOne({ email: req.user.email, milestoneid });
         } else if (filterPattern === 'tag') {
+            const filterDepth = req.query.depth || 'in';
             if (!searchString) {
                 return res.status(400).send({ error: `At least one tag must be present in search query` });
             }
             activitycodes = !!searchString ? (searchString.toLowerCase()).split(',') : [];
-            milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $in: activitycodes } }).sort({ year: 1, month: 1, day: 1 });
+            if (filterDepth === 'in') {
+                milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $in: activitycodes } }).sort({ year: 1, month: 1, day: 1 });
+            } else if (filterDepth === 'all') {
+                milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $all: activitycodes } }).sort({ year: 1, month: 1, day: 1 });
+            } else {
+                return res.status(400).send({ error: `The value provided for depth is not supported` });
+            }
+        } else if (filterPattern === 'daterange') {
+            const dateRanges = !!searchString ? searchString.split(',') : [];
+            if (dateRanges.length === 2) {
+                const date1 = dateRanges[0].split('-');
+                const month1 = date1[0];
+                const day1 = date1[1];
+                const year1 = date1[2];
+                const stringDateInput1 = `${month1}-${day1}-${year1}`;
+                const date2 = dateRanges[1].split('-');
+                const month2 = date2[0];
+                const day2 = date2[1];
+                const year2 = date2[2];
+                const stringDateInput2 = `${month2}-${day2}-${year2}`;
+                if (!validateStringDate(stringDateInput1) || !validateStringDate(stringDateInput2)) {
+                    return res.status(400).send({ error: `Invalid date provided in at least one of the date range values` });
+                }
+                if (!validateStringDateRange(stringDateInput1, stringDateInput2)) {
+                    return res.status(400).send({ error: `End date must be on or after start date` });
+                }
+                milestones = await Milestone.find({email: req.user.email, year: { $gte: year1, $lte: year2 }, month: { $gte: month1, $lte: month2 }, day: { $gte: day1, $lte: day2 } })
+                                            .sort({ year: 1, month: 1, day: 1 });
+            } else {
+                return res.status(400).send({ error: `Invalid parameters provided for date ranges` });
+            }
+        } else {
+            return res.status(400).send({ error: `The value provided for findBy is not supported` });
         }
         return res.status(200).send(milestones);
     } catch (error) {
