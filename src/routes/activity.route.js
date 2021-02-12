@@ -14,9 +14,13 @@ router.post('', guard, async (req, res) => {
 });
 
 router.get('', guard, async(req, res) => {
+    const searchString = req.query.q;
+    if (!searchString) {
+        return res.status(400).send({ error: 'Cannot perform a search without a query parameter' });
+    }
     try {
-        const activities = await Activity.find({ email: req.user.email });
-        return res.status(200).send(activities);
+        const activities = await Activity.find({ email: req.user.email, activitycode: { $regex: searchString } }).sort({ email: 1, activitycode: 1 });
+        return res.status(200).send(activities.map(activity => activity.activitycode));
     } catch (error) {
         return res.status(500).send({ error: error.message });
     }

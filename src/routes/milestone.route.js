@@ -148,10 +148,10 @@ router.patch('/:milestoneid', guard, async (req, res) => {
     const milestoneid = parseInt(req.params.milestoneid);
     try {
         const milestone = await Milestone.findOne({ milestoneid, email });
-        const src = milestone.activitycodeslc;
         if (!milestone) {
             return res.status(404).send({ error: `No milestone found with id ${milestoneid}` });
         }
+        const src = milestone.activitycodeslc;
 
         const month = req.body.month || milestone['month'];
         const day = req.body.day || milestone['day'];
