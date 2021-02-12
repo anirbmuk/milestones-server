@@ -35,6 +35,9 @@ activitySchema.methods.toJSON = function() {
 
     delete activityObject._id;
     delete activityObject.__v;
+    delete activityObject.createdAt;
+    delete activityObject.updatedAt;
+    delete activityObject.email;
 
     return activityObject;
 
