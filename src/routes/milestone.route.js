@@ -1,30 +1,24 @@
 const router = require('express').Router();
 const Milestone = require('./../models/milestone.model');
-// const Activity = require('./../models/activity.model');
+const Activity = require('./../models/activity.model');
 const guard = require('./../middleware/guard.mw');
 const getNextValue = require('./../utils/sequence.util');
 const { validateStringDate, validateStringDateRange } = require('./../utils/date.util');
 
-/* const validateActivityCode = async (email, activitycode) => {
+const addActivityCode = async (email, activitycode) => {
     if (!activitycode) {
-        return null;
+        return;
     }
-    const activity = await Activity.findOne({ email, activitycode });
-    if (!activity) {
-        return null;
-    }
-    return activity.activitycode;
-} */
+    const activity = new Activity({ email, activitycode });
+    try {
+        await activity.save();
+    } catch { }
+}
 
 router.post('', guard, async (req, res) => {
     const email = req.user.email;
     const payload = { ... req.body };
-    // const activitycode = req.body.activitycode;
-    try {        
-        /* const activity = await validateActivityCode(email, activitycode);
-        if (!activity) {
-            return res.status(400).send({ error: `No activity found with code ${activitycode}` });
-        } */
+    try {
 
         const month = payload.month;
         const day = payload.day;
@@ -49,6 +43,10 @@ router.post('', guard, async (req, res) => {
 
         const milestone = new Milestone(payload);
         await milestone.save();
+
+        for (const activitycode of payload.activitycodeslc) {
+            addActivityCode(email, activitycode);
+        }
         return res.status(201).send(milestone);
     } catch (error) {
         return res.status(500).send({ error: error.message });
@@ -125,8 +123,9 @@ router.get('', guard, async(req, res) => {
 
 router.patch('/:milestoneid', guard, async (req, res) => {
     const allowedAttributes = Milestone.getUpdatableAttributes();
-    const update = req.body;
+    const update = { ...req.body };
     const updateAttributes = Object.keys(update);
+    const tgt = (!!update.activitycodes && Array.isArray(update.activitycodes)) ? update.activitycodes.map(each => each.toLowerCase()) : []
 
     const isValidOperation = updateAttributes.every(each => allowedAttributes.includes(each));
     if (!isValidOperation) {
@@ -149,6 +148,7 @@ router.patch('/:milestoneid', guard, async (req, res) => {
     const milestoneid = parseInt(req.params.milestoneid);
     try {
         const milestone = await Milestone.findOne({ milestoneid, email });
+        const src = milestone.activitycodeslc;
         if (!milestone) {
             return res.status(404).send({ error: `No milestone found with id ${milestoneid}` });
         }
@@ -165,6 +165,11 @@ router.patch('/:milestoneid', guard, async (req, res) => {
         updateAttributes.forEach(attribute => milestone[attribute] = update[attribute]);
         milestone.activitycodeslc = (!!milestone.activitycodes && Array.isArray(milestone.activitycodes)) ? milestone.activitycodes.map(each => each.toLowerCase()) : []
         await milestone.save();
+
+        const diff = tgt.map(each => src.includes(each) ? false : each).filter(each => Boolean(each));
+        for (const activitycode of diff) {
+            addActivityCode(email, activitycode);
+        }
 
         res.status(200).send(milestone);
     } catch (error) {

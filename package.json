@@ -1,12 +1,24 @@
 {
   "name": "milestones-server",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Nodejs middleware for Milestones angular 10 application",
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js"
   },
+  "author": {
+    "name": "anirbmuk",
+    "email": "anirbmuk@live.in"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anirbmuk/milestones-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anirbmuk/milestones-server/issues"
+  },
+  "homepage": "https://milestones-home.uc.r.appspot.com",
   "keywords": [
     "node",
     "express",

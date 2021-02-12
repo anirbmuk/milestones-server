@@ -17,11 +17,6 @@ const activitySchema = mongoose.Schema({
         type: String,
         required: true,
         trim: true
-    },
-    description: {
-        type: String,
-        required: true,
-        trim: true
     }
 }, {
     timestamps: true
@@ -29,7 +24,7 @@ const activitySchema = mongoose.Schema({
 
 activitySchema.index({
     email: 1,
-    activitycode: 2
+    activitycode: 1
 }, {
     unique: true
 });
