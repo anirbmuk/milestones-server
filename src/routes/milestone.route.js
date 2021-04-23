@@ -56,6 +56,14 @@ router.post('', guard, async (req, res) => {
 router.get('', guard, async(req, res) => {
     const filterPattern = req.query.findBy;
     const searchString = req.query.q;
+    let limit = 10;
+    let skip = 10;
+    if (!!req.query.limit && !isNaN(req.query.limit)) {
+        limit = +req.query.limit;
+    }
+    if (!!req.query.skip && !isNaN(req.query.skip)) {
+        skip = +req.query.skip;
+    }
     if (!filterPattern) {
         return res.status(400).send({ error: 'Cannot perform a search without a filter pattern' });
     }
@@ -82,9 +90,15 @@ router.get('', guard, async(req, res) => {
             }
             activitycodes = !!searchString ? (searchString.toLowerCase()).split(',') : [];
             if (filterDepth === 'in') {
-                milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $in: activitycodes } }).sort({ year: 1, month: 1, day: 1 });
+                milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $in: activitycodes } })
+                                            .limit(limit)
+                                            .skip(skip)
+                                            .sort({ year: 1, month: 1, day: 1 });
             } else if (filterDepth === 'all') {
-                milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $all: activitycodes } }).sort({ year: 1, month: 1, day: 1 });
+                milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $all: activitycodes } })
+                                            .limit(limit)
+                                            .skip(skip)
+                                            .sort({ year: 1, month: 1, day: 1 });
             } else {
                 return res.status(400).send({ error: `The value provided for depth is not supported` });
             }
@@ -92,14 +106,14 @@ router.get('', guard, async(req, res) => {
             const dateRanges = !!searchString ? searchString.split(',') : [];
             if (dateRanges.length === 2) {
                 const date1 = dateRanges[0].split('-');
-                const month1 = date1[0];
-                const day1 = date1[1];
-                const year1 = date1[2];
+                const month1 = +date1[0];
+                const day1 = +date1[1];
+                const year1 = +date1[2];
                 const stringDateInput1 = `${month1}-${day1}-${year1}`;
                 const date2 = dateRanges[1].split('-');
-                const month2 = date2[0];
-                const day2 = date2[1];
-                const year2 = date2[2];
+                const month2 = +date2[0];
+                const day2 = +date2[1];
+                const year2 = +date2[2];
                 const stringDateInput2 = `${month2}-${day2}-${year2}`;
                 if (!validateStringDate(stringDateInput1) || !validateStringDate(stringDateInput2)) {
                     return res.status(400).send({ error: `Invalid date provided in at least one of the date range values` });
@@ -108,6 +122,8 @@ router.get('', guard, async(req, res) => {
                     return res.status(400).send({ error: `End date must be on or after start date` });
                 }
                 milestones = await Milestone.find({email: req.user.email, year: { $gte: year1, $lte: year2 }, month: { $gte: month1, $lte: month2 }, day: { $gte: day1, $lte: day2 } })
+				                            .limit(limit)
+                                            .skip(skip)
                                             .sort({ year: 1, month: 1, day: 1 });
             } else {
                 return res.status(400).send({ error: `Invalid parameters provided for date ranges` });
