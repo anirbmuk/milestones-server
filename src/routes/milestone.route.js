@@ -56,8 +56,8 @@ router.post('', guard, async (req, res) => {
 router.get('', guard, async(req, res) => {
     const filterPattern = req.query.findBy;
     const searchString = req.query.q;
-    let limit = 10;
-    let skip = 10;
+    let limit = 8;
+    let skip = 0;
     if (!!req.query.limit && !isNaN(req.query.limit)) {
         limit = +req.query.limit;
     }
@@ -85,6 +85,8 @@ router.get('', guard, async(req, res) => {
             milestones = await Milestone.findOne({ email: req.user.email, milestoneid });
         } else if (filterPattern === 'tag') {
             const filterDepth = req.query.depth || 'in';
+			const sortDir = req.query.sort || 'asc';
+			const sortParam = (sortDir === 'asc' ? ({ year: 1, month: 1, day: 1 }) : ({ year: -1, month: -1, day: -1 }));
             if (!searchString) {
                 return res.status(400).send({ error: `At least one tag must be present in search query` });
             }
@@ -93,12 +95,12 @@ router.get('', guard, async(req, res) => {
                 milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $in: activitycodes } })
                                             .limit(limit)
                                             .skip(skip)
-                                            .sort({ year: 1, month: 1, day: 1 });
+                                            .sort(sortParam);
             } else if (filterDepth === 'all') {
                 milestones = await Milestone.find({ email: req.user.email, activitycodeslc: { $all: activitycodes } })
                                             .limit(limit)
                                             .skip(skip)
-                                            .sort({ year: 1, month: 1, day: 1 });
+                                            .sort(sortParam);
             } else {
                 return res.status(400).send({ error: `The value provided for depth is not supported` });
             }
