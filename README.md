@@ -1,5 +1,5 @@
 # milestones-server
-Nodejs middleware for Milestones angular 10 application  
+Nodejs middleware for Milestones angular 11 application  
 
 - - - -  
 
@@ -7,7 +7,7 @@ Nodejs middleware for Milestones angular 10 application
 What I wanted     | What I got  
 ----------------- | --------------  
 IDE               | MS Visual Studio Code  
-Front-end         | Angular 10  
+Front-end         | Angular 11  
 Database          | MongoDB  
 Middleware        | Node 14, Express (4.17.1)  
 MW Hosting        | GCP    
