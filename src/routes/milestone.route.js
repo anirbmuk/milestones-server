@@ -56,6 +56,8 @@ router.post('', guard, async (req, res) => {
 router.get('', guard, async(req, res) => {
     const filterPattern = req.query.findBy;
     const searchString = req.query.q;
+    const sortDir = req.query.sort || 'asc';
+    const sortParam = (sortDir === 'asc' ? ({ year: 1, month: 1, day: 1 }) : ({ year: -1, month: -1, day: -1 }));
     let limit = 8;
     let skip = 0;
     if (!!req.query.limit && !isNaN(req.query.limit)) {
@@ -85,8 +87,6 @@ router.get('', guard, async(req, res) => {
             milestones = await Milestone.findOne({ email: req.user.email, milestoneid });
         } else if (filterPattern === 'tag') {
             const filterDepth = req.query.depth || 'in';
-			const sortDir = req.query.sort || 'asc';
-			const sortParam = (sortDir === 'asc' ? ({ year: 1, month: 1, day: 1 }) : ({ year: -1, month: -1, day: -1 }));
             if (!searchString) {
                 return res.status(400).send({ error: `At least one tag must be present in search query` });
             }
@@ -123,10 +123,21 @@ router.get('', guard, async(req, res) => {
                 if (!validateStringDateRange(stringDateInput1, stringDateInput2)) {
                     return res.status(400).send({ error: `End date must be on or after start date` });
                 }
-                milestones = await Milestone.find({email: req.user.email, year: { $gte: year1, $lte: year2 }, month: { $gte: month1, $lte: month2 }, day: { $gte: day1, $lte: day2 } })
+                let query = { email: req.user.email, year: { $gte: year1, $lte: year2 } };
+                if (month2 >= month1) {
+                    query.month = { $gte: month1, $lte: month2 };
+                    if (day2 >= day1) {
+                        query.day = { $gte: day1, $lte: day2 };
+                    } else {
+                        query.$or = [{ day: { $gte: day1, $lte: 31 } }, { day: { $gte: 1, $lte: day2 } }];
+                    }
+                } else {
+                    query.$or = [{ $and: [{ month: { $gte: month1, $lte: 12 } }, { day: { $gte: day1, $lte: 31 } }] }, { $and: [{ month: { $gte: 1, $lte: month2 } }, { day: { $gte: 1, $lte: day2 } }] }];
+                }
+                milestones = await Milestone.find(query)
 				                            .limit(limit)
                                             .skip(skip)
-                                            .sort({ year: 1, month: 1, day: 1 });
+                                            .sort(sortParam);
             } else {
                 return res.status(400).send({ error: `Invalid parameters provided for date ranges` });
             }
