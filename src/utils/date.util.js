@@ -1,5 +1,7 @@
+const timeZone = 'Asia/Kolkata';
+
 const validateStringDate = stringDateInput => {
-    const convertedDate = (new Date(stringDateInput)).toLocaleString('en-US', {timeZone: 'Asia/Kolkata' });
+    const convertedDate = (new Date(stringDateInput)).toLocaleString('en-US', { timeZone });
 
     const inputDateParts = stringDateInput.split('-');
     const inputMonth = inputDateParts[0];
@@ -23,9 +25,11 @@ const validateStringDate = stringDateInput => {
 };
 
 const validateStringDateRange = (stringDateInput1, stringDateInput2) => {
-    const date1 = new Date(stringDateInput1);
-    const date2 = new Date(stringDateInput2);
-    return date2.getTime() >= date1.getTime();
+    return getTime(stringDateInput2) >= getTime(stringDateInput1);
 };
 
-module.exports = { validateStringDate, validateStringDateRange };
+const getTime = stringDateInput => {
+    return (new Date((new Date(stringDateInput)).toLocaleString('en-US', { timeZone }))).getTime();
+};
+
+module.exports = { validateStringDate, validateStringDateRange, getTime };

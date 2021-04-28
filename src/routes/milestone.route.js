@@ -3,7 +3,7 @@ const Milestone = require('./../models/milestone.model');
 const Activity = require('./../models/activity.model');
 const guard = require('./../middleware/guard.mw');
 const getNextValue = require('./../utils/sequence.util');
-const { validateStringDate, validateStringDateRange } = require('./../utils/date.util');
+const { validateStringDate, validateStringDateRange, getTime } = require('./../utils/date.util');
 
 const addActivityCode = async (email, activitycode) => {
     if (!activitycode) {
@@ -39,7 +39,8 @@ router.post('', guard, async (req, res) => {
 
         payload.milestoneid = milestoneid;
         payload.email = email;
-        payload.activitycodeslc = (!!payload.activitycodes && Array.isArray(payload.activitycodes)) ? payload.activitycodes.map(each => each.toLowerCase()) : []
+        payload.activitycodeslc = (!!payload.activitycodes && Array.isArray(payload.activitycodes)) ? payload.activitycodes.map(each => each.toLowerCase()) : [];
+        payload.dateobject = getTime(stringDateInput);
 
         const milestone = new Milestone(payload);
         await milestone.save();
@@ -107,34 +108,15 @@ router.get('', guard, async(req, res) => {
         } else if (filterPattern === 'daterange') {
             const dateRanges = !!searchString ? searchString.split(',') : [];
             if (dateRanges.length === 2) {
-                const date1 = dateRanges[0].split('-');
-                const month1 = +date1[0];
-                const day1 = +date1[1];
-                const year1 = +date1[2];
-                const stringDateInput1 = `${month1}-${day1}-${year1}`;
-                const date2 = dateRanges[1].split('-');
-                const month2 = +date2[0];
-                const day2 = +date2[1];
-                const year2 = +date2[2];
-                const stringDateInput2 = `${month2}-${day2}-${year2}`;
+                const stringDateInput1 = dateRanges[0];
+                const stringDateInput2 = dateRanges[1];
                 if (!validateStringDate(stringDateInput1) || !validateStringDate(stringDateInput2)) {
                     return res.status(400).send({ error: `Invalid date provided in at least one of the date range values` });
                 }
                 if (!validateStringDateRange(stringDateInput1, stringDateInput2)) {
                     return res.status(400).send({ error: `End date must be on or after start date` });
                 }
-                let query = { email: req.user.email, year: { $gte: year1, $lte: year2 } };
-                if (month2 >= month1) {
-                    query.month = { $gte: month1, $lte: month2 };
-                    if (day2 >= day1) {
-                        query.day = { $gte: day1, $lte: day2 };
-                    } else {
-                        query.$or = [{ day: { $gte: day1, $lte: 31 } }, { day: { $gte: 1, $lte: day2 } }];
-                    }
-                } else {
-                    query.$or = [{ $and: [{ month: { $gte: month1, $lte: 12 } }, { day: { $gte: day1, $lte: 31 } }] }, { $and: [{ month: { $gte: 1, $lte: month2 } }, { day: { $gte: 1, $lte: day2 } }] }];
-                }
-                milestones = await Milestone.find(query)
+                milestones = await Milestone.find({ email: req.user.email, dateobject: { $gte: getTime(stringDateInput1), $lte: getTime(stringDateInput2) } })
 				                            .limit(limit)
                                             .skip(skip)
                                             .sort(sortParam);
@@ -192,7 +174,8 @@ router.patch('/:milestoneid', guard, async (req, res) => {
         }
 
         updateAttributes.forEach(attribute => milestone[attribute] = update[attribute]);
-        milestone.activitycodeslc = (!!milestone.activitycodes && Array.isArray(milestone.activitycodes)) ? milestone.activitycodes.map(each => each.toLowerCase()) : []
+        milestone.activitycodeslc = (!!milestone.activitycodes && Array.isArray(milestone.activitycodes)) ? milestone.activitycodes.map(each => each.toLowerCase()) : [];
+        milestone.dateobject = getTime(stringDateInput);
         await milestone.save();
 
         const diff = tgt.map(each => src.includes(each) ? false : each).filter(each => Boolean(each));

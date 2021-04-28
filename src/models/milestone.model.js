@@ -37,7 +37,11 @@ const milestoneSchema = mongoose.Schema({
     description: {
         type: String,
         trim: true
-    }
+    },
+    dateobject: {
+        type: Number,
+        trim: true
+    },
 }, {
     timestamps: true
 });
