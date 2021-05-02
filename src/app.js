@@ -15,8 +15,7 @@ const allowedOrigins = [
     'http://localhost:8080',
     'http://127.0.0.1:4000',
     'http://localhost:4000',
-    'https://milestones-home.firebaseapp.com',
-    'https://home-milestones.el.r.appspot.com'
+    'https://home-milestones.firebaseapp.com'
 ];
 
 app.use((req, res, next) => {
