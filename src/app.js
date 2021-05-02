@@ -8,7 +8,16 @@ const milestoneRoutes = require('./routes/milestone.route');
 
 const basePath = process.env.milestones_server_base_path;
 
-const allowedOrigins = ['http://127.0.0.1:4200', 'http://localhost:4200', 'http://127.0.0.1:8080', 'http://localhost:8080', 'https://milestones-home.firebaseapp.com'];
+const allowedOrigins = [
+    'http://127.0.0.1:4200',
+    'http://localhost:4200',
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'http://127.0.0.1:4000',
+    'http://localhost:4000',
+    'https://milestones-home.firebaseapp.com',
+    'https://home-milestones.el.r.appspot.com'
+];
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
