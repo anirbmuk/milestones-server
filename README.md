@@ -10,8 +10,8 @@ IDE               | MS Visual Studio Code
 Front-end         | Angular 11  
 Database          | MongoDB  
 Middleware        | Node 14, Express (4.17.1)  
-MW Hosting        | GCP    
-App Hosting       | GCP  
+MW Hosting        | GCP (asia-south1)    
+App Hosting       | GCP (asia-south1)  
 
 - - - -  
 
@@ -21,6 +21,6 @@ https://github.com/anirbmuk/milestones.git
 - - - -
 
 ## Cloud deployment
-Angular - https://milestones-home.firebaseapp.com  
-Node & Express - https://milestones-home.uc.r.appspot.com  
+Angular - https://home-milestones.firebaseapp.com  
+Node & Express - https://home-milestones.el.r.appspot.com  
 Mongo - Cloud atlas  
