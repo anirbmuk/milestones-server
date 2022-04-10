@@ -4,8 +4,6 @@ require('dotenv').config();
 let connectionURL = '';
 const appEnvironment = process.env.app_environment;
 const connectionParameters = {
-    useCreateIndex: true,
-    useFindAndModify: true,
     useNewUrlParser: true,
     useUnifiedTopology: true
 };
