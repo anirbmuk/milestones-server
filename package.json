@@ -12,10 +12,7 @@
     "dev": "nodemon dist/server.js",
     "start": "node dist/server.js",
     "clean": "rimraf dist",
-    "cy:run": "cypress run --browser chrome",
-    "cy:open": "cypress open --browser chrome",
-    "cy:test": "cypress run --headless --browser chrome",
-    "postinstall": "npx husky install"
+    "prepare": "npx husky install"
   },
   "author": {
     "name": "anirbmuk",
@@ -51,7 +48,6 @@
     "@types/validator": "^13.7.2",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
     "@typescript-eslint/parser": "^5.19.0",
-    "cypress": "^9.5.4",
     "eslint": "^8.13.0",
     "husky": "^7.0.4",
     "nodemon": "^2.0.15",
