@@ -17,4 +17,6 @@ mongoose
     autoIndex: true,
     autoCreate: true,
   })
-  .catch(() => console.error('Failed to connect to mongodb'));
+  .catch((err: Error) =>
+    console.error('Failed to connect to mongodb', `${err}`),
+  );
