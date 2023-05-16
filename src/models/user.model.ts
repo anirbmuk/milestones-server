@@ -7,8 +7,9 @@ import { IBase, IStatics } from './base.model';
 
 const client_secret = process.env.milestones_server_client_secret || '';
 const MIN_PASSWORD_HASH_CYCLE = 8;
-const client_password_hash_cycle =
-  process.env.client_password_hash_cycle || MIN_PASSWORD_HASH_CYCLE;
+const client_password_hash_cycle = Number(
+  process.env.client_password_hash_cycle || MIN_PASSWORD_HASH_CYCLE,
+);
 
 export interface IUser extends IBase<IUser> {
   email: string;

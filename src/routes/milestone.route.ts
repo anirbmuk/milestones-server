@@ -9,6 +9,15 @@ import {
 } from './../utils/date.util';
 import { SortOrder } from 'mongoose';
 
+type RequestQuery = {
+  findBy: 'id' | 'tag' | 'date' | 'daterange';
+  depth: 'in' | 'all';
+  q: string | undefined;
+  sort: 'asc' | 'desc' | undefined;
+  limit: string | undefined;
+  skip: string | undefined;
+};
+
 const router = Router();
 
 const addActivityCode = async (email: string, activitycode: string) => {
@@ -66,19 +75,24 @@ const addMilestone: RequestHandler = async (req, res) => {
 };
 
 const getMilestones: RequestHandler = async (req, res) => {
-  const { findBy: filterPattern, q: searchString } = req.query;
-  const sortDir = req.query.sort || 'asc';
+  const query = req.query as RequestQuery;
+  const {
+    findBy: filterPattern,
+    q: searchString,
+    depth: filterDepth = 'in',
+    sort: sortDir = 'asc',
+  } = query;
   const sortParam: { [key: string]: SortOrder } =
     sortDir === 'asc'
       ? { year: 1, month: 1, day: 1 }
       : { year: -1, month: -1, day: -1 };
   let limit = 8;
   let skip = 0;
-  if (!!req.query.limit && !isNaN(+req.query.limit)) {
-    limit = +req.query.limit;
+  if (query.limit && !isNaN(+query.limit)) {
+    limit = +query.limit;
   }
-  if (!!req.query.skip && !isNaN(+req.query.skip)) {
-    skip = +req.query.skip;
+  if (query.skip && !isNaN(+query.skip)) {
+    skip = +query.skip;
   }
   if (!filterPattern) {
     return res
@@ -114,7 +128,6 @@ const getMilestones: RequestHandler = async (req, res) => {
         milestoneid,
       });
     } else if (filterPattern === 'tag') {
-      const filterDepth = req.query.depth || 'in';
       if (!searchString) {
         return res
           .status(400)
