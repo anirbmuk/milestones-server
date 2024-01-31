@@ -39,14 +39,4 @@ sequenceSchema.index(
   },
 );
 
-sequenceSchema.method('toJSON', function () {
-  const sequence = this;
-  const sequenceObject = sequence.toObject();
-
-  delete sequenceObject._id;
-  delete sequenceObject.__v;
-
-  return sequenceObject;
-});
-
 export const Sequence = model<ISequence>('sequence', sequenceSchema);

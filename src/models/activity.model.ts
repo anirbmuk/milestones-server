@@ -40,17 +40,4 @@ activitySchema.index(
   },
 );
 
-activitySchema.method('toJSON', function () {
-  const activity = this;
-  const activityObject = activity.toObject();
-
-  delete activityObject._id;
-  delete activityObject.__v;
-  delete activityObject.createdAt;
-  delete activityObject.updatedAt;
-  delete activityObject.email;
-
-  return activityObject;
-});
-
 export const Activity = model<IActivity>('activity', activitySchema);

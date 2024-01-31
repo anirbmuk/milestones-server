@@ -82,17 +82,6 @@ milestoneSchema.index({
   activitycodeslc: 1,
 });
 
-milestoneSchema.method('toJSON', function () {
-  const milestone = this;
-  const milestoneObject = milestone.toObject();
-
-  delete milestoneObject._id;
-  delete milestoneObject.__v;
-  delete milestoneObject.activitycodeslc;
-
-  return milestoneObject;
-});
-
 milestoneSchema.static(
   'getUpdatableAttributes',
   function (): (keyof IMilestone)[] {
