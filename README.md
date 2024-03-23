@@ -1,5 +1,5 @@
 # milestones-server
-Nodejs middleware for Milestones angular application  
+Nodejs middleware for **Milestones** front-end application  
 
 - - - -  
 
@@ -7,20 +7,20 @@ Nodejs middleware for Milestones angular application
 What I wanted     | What I got  
 ----------------- | --------------  
 IDE               | MS Visual Studio Code  
-Front-end         | Angular 13  
+Front-end         | Nuxt3 13  
 Database          | MongoDB  
 Middleware        | Node, Express  
-MW Hosting        | GCP (asia-south1)    
-App Hosting       | GCP (asia-south1)  
+MW Hosting        | GCP  
+FE Hosting        | Netlify  
 
 - - - -  
 
-## Angular front-end  
-https://github.com/anirbmuk/milestones.git  
+## Nuxt3 front-end  
+https://github.com/anirbmuk/nuxt-milestones.git  
 
 - - - -
 
 ## Cloud deployment
-Angular - https://home-milestones.firebaseapp.com  
-Node & Express - https://home-milestones.el.r.appspot.com  
+Nuxt3 - https://home-milestones.netlify.app  
+Node & Express - https://home-milestones.appspot.com  
 Mongo - Cloud atlas  
