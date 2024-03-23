@@ -1,7 +1,7 @@
 {
   "name": "milestones-server",
-  "version": "4.0.3",
-  "description": "Nodejs middleware for Milestones angular application",
+  "version": "5.0.0",
+  "description": "Nodejs middleware for Milestones front-end application",
   "main": "src/server.js",
   "scripts": {
     "deploy": "gcloud config set project home-milestones && gcloud app deploy --quiet",
@@ -25,7 +25,7 @@
   "bugs": {
     "url": "https://github.com/anirbmuk/milestones-server/issues"
   },
-  "homepage": "https://milestones-home.uc.r.appspot.com",
+  "homepage": "https://milestones-home.appspot.com",
   "keywords": [
     "node",
     "express",
