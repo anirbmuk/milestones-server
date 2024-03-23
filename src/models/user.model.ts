@@ -4,6 +4,8 @@ import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 import { IBase, IStatics } from './base.model';
+import { ErrorCodes } from '../constants/messages';
+import { maskEmail } from '../utils/string.util';
 
 const client_secret = process.env.milestones_server_client_secret || '';
 const MIN_PASSWORD_HASH_CYCLE = 8;
@@ -72,12 +74,16 @@ userSchema.methods.toJSON = function () {
   delete userObject.password;
   delete userObject.tokens;
 
+  userObject.email = maskEmail(userObject.email);
+
   return userObject;
 };
 
 userSchema.method('generateToken', async function () {
   const user = this;
-  const token = jwt.sign({ _id: user._id.toString() }, client_secret);
+  const token = jwt.sign({ _id: user._id.toString() }, client_secret, {
+    expiresIn: '1d',
+  });
   user.tokens = user.tokens.concat({ token });
   await user.save();
   return token;
@@ -85,15 +91,15 @@ userSchema.method('generateToken', async function () {
 
 userSchema.static('authenticate', async function (email, password) {
   if (!email || !password) {
-    throw new Error('Username or password cannot be empty');
+    throw new Error(ErrorCodes.INVALID_INPUT);
   }
   const user = await User.findOne({ email });
   if (!user) {
-    throw new Error('Invalid credentials provided for milestones system');
+    throw new Error(ErrorCodes.INVALID_CREDENTIALS);
   }
   const match = await bcryptjs.compare(password, user.password);
   if (!match) {
-    throw new Error('Invalid credentials provided for milestones system');
+    throw new Error(ErrorCodes.INVALID_CREDENTIALS);
   }
   return user;
 });

@@ -1,6 +1,7 @@
 import { RequestHandler, Router } from 'express';
 import { User } from './../models';
 import guard from './../middleware/guard.mw';
+import { ErrorCodes, messages } from '../constants/messages';
 
 const router = Router();
 
@@ -20,7 +21,9 @@ const login: RequestHandler = async (req, res) => {
     const token = await user.generateToken();
     return res.status(200).send({ user, token, auth: true });
   } catch (error) {
-    res.status(500).send({ error: (error as Error).message });
+    const message = ((error as Error).message as ErrorCodes) || '';
+    const { code, message: output } = messages[message || ErrorCodes.GENERIC];
+    res.status(code).send({ error: output });
   }
 };
 

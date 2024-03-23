@@ -1,11 +1,11 @@
-const timeZone = 'Asia/Kolkata';
+export const validateStringDate = (input: string) => {
+  const [dd, mm, yyyy] = input.split('-');
+  if (!dd || !mm || !yyyy) {
+    return false;
+  }
 
-export const validateStringDate = (stringDateInput: string) => {
-  const convertedDate = new Date(stringDateInput).toLocaleString('en-US', {
-    timeZone,
-  });
-
-  const [inputMonth, inputDay, inputYear] = stringDateInput.split('-');
+  const stringDateInput = `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
+  const [inputYear, inputMonth, inputDay] = stringDateInput.split('-');
 
   if (
     +inputMonth <= 0 ||
@@ -16,14 +16,14 @@ export const validateStringDate = (stringDateInput: string) => {
     return false;
   }
 
-  const [convertedMonth, convertedDay, convertedYear] = convertedDate
-    .split(', ')[0]
-    .split('/');
-
+  const convertedDate = new Date(stringDateInput).toISOString();
+  const [convertedYear, convertedMonth, convertedDay] = convertedDate
+    .split('T')[0]
+    .split('-');
   if (
-    inputMonth === convertedMonth &&
-    inputDay === convertedDay &&
-    inputYear === convertedYear
+    +inputMonth === +convertedMonth &&
+    +inputDay === +convertedDay &&
+    +inputYear === +convertedYear
   ) {
     return true;
   }
@@ -38,7 +38,10 @@ export const validateStringDateRange = (
 };
 
 export const getTime = (stringDateInput: string) => {
+  const [dd, mm, yyyy] = stringDateInput.split('-');
   return new Date(
-    new Date(stringDateInput).toLocaleString('en-US', { timeZone }),
+    new Date(
+      `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`,
+    ).toISOString(),
   ).getTime();
 };

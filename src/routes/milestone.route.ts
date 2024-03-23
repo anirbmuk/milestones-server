@@ -40,7 +40,7 @@ const addMilestone: RequestHandler = async (req, res) => {
     if (month === undefined || day === undefined || year === undefined) {
       return res.status(400).send({ error: 'Invalid date sent in request' });
     }
-    const stringDateInput = `${month}-${day}-${year}`;
+    const stringDateInput = `${day}-${month}-${year}`;
     if (!validateStringDate(stringDateInput)) {
       return res
         .status(400)
@@ -108,8 +108,8 @@ const getMilestones: RequestHandler = async (req, res) => {
     milestones: IMilestone | IMilestone[] | null;
   try {
     if (filterPattern === 'date') {
-      [month, day, year] = ((searchString as string) || '').split('-');
-      const stringDateInput = `${month}-${day}-${year}`;
+      [day, month, year] = ((searchString as string) || '').split('-');
+      const stringDateInput = `${day}-${month}-${year}`;
       if (!validateStringDate(stringDateInput)) {
         return res
           .status(400)
@@ -251,7 +251,7 @@ const updateMilestone: RequestHandler<{ milestoneid: string }> = async (
     const day = req.body.day || milestone['day'];
     const year = req.body.year || milestone['year'];
 
-    const stringDateInput = `${month}-${day}-${year}`;
+    const stringDateInput = `${day}-${month}-${year}`;
     if (!validateStringDate(stringDateInput)) {
       return res
         .status(400)
@@ -267,7 +267,7 @@ const updateMilestone: RequestHandler<{ milestoneid: string }> = async (
       !!milestone.activitycodes && Array.isArray(milestone.activitycodes)
         ? milestone.activitycodes.map((each: string) => each.toLowerCase())
         : [];
-    milestone.dateobject = getTime(stringDateInput);
+    milestone.dateobject = getTime(`${day}-${month}-${year}`);
     await milestone.save();
 
     const diff = tgt
@@ -298,7 +298,7 @@ const deleteMilestone: RequestHandler<{ milestoneid: string }> = async (
         .status(404)
         .send({ error: `No milestone found with id ${milestoneid}` });
     }
-    return res.status(200).send(milestone);
+    return res.status(204).send(milestone);
   } catch (error) {
     return res.status(500).send({ error: (error as Error).message });
   }
