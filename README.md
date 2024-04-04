@@ -7,7 +7,7 @@ Nodejs middleware for **Milestones** front-end application
 What I wanted     | What I got  
 ----------------- | --------------  
 IDE               | MS Visual Studio Code  
-Front-end         | Nuxt3 13  
+Front-end         | Nuxt3  
 Database          | MongoDB  
 Middleware        | Node, Express  
 MW Hosting        | GCP  
@@ -22,5 +22,5 @@ https://github.com/anirbmuk/nuxt-milestones.git
 
 ## Cloud deployment
 Nuxt3 - https://home-milestones.netlify.app  
-Node & Express - https://home-milestones.appspot.com  
+Node & Express - https://home-milestones-mw.appspot.com  
 Mongo - Cloud atlas  
