@@ -16,7 +16,7 @@ FE Hosting        | Netlify
 - - - -  
 
 ## Nuxt3 front-end  
-https://github.com/anirbmuk/nuxt-milestones.git  
+https://github.com/anirbmuk/milestones-nuxt.git  
 
 - - - -
 
