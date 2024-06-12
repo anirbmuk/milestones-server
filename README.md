@@ -10,8 +10,8 @@ IDE               | MS Visual Studio Code
 Front-end         | Nuxt3  
 Database          | MongoDB  
 Middleware        | Node, Express  
-MW Hosting        | GCP  
-FE Hosting        | Netlify  
+MW Hosting        | -  
+FE Hosting        | -  
 
 - - - -  
 
@@ -21,6 +21,6 @@ https://github.com/anirbmuk/milestones-nuxt.git
 - - - -
 
 ## Cloud deployment
-Nuxt3 - https://home-milestones.netlify.app  
-Node & Express - https://home-milestones-mw.appspot.com  
+Nuxt3 - ~~https://home-milestones.netlify.app~~  
+Node & Express - ~~https://home-milestones-mw.appspot.com~~  
 Mongo - Cloud atlas  
